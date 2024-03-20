@@ -79,11 +79,11 @@
     <Compile Include="Calc.xaml.cs">
       <DependentUpon>Calc.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Calculator.cs" />
+    <Compile Include="App\Calculator.cs" />
     <Compile Include="Calculator.xaml.cs">
       <DependentUpon>Calculator.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataBase.cs" />
+    <Compile Include="App\DataBase.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
