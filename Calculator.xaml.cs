@@ -16,12 +16,14 @@ namespace WpfApp1
     {
         DataBase dataBase = new DataBase();
 
-        private Collection<string> computationHistory;
+        private ObservableCollection<string> computationHistory;
+
+
         public Calculator()
         {
             InitializeComponent();
 
-            computationHistory = new Collection<string>();
+            computationHistory = new ObservableCollection<string>();
             Calculator.InputRestriction = 12;
             Calculator.ComputationEnded += (s, b) =>
             {
@@ -185,10 +187,6 @@ namespace WpfApp1
             Clipboard.SetText(tbOut.Text);
         }
 
-        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (computationHistory.Count != 0) e.CanExecute = true;
-        }
 
         private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -204,6 +202,83 @@ namespace WpfApp1
                 MessageBox.Show("History of computations has been saved in the file: " + logFilePath);
 
             }
+            if (computationHistory.Count == 0)
+            {
+                MessageBox.Show("Нет истории вычислений для сохранения.", "Пусто", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Сохранение уравнения и результата в отдельные файлы
+            string equationsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Equations.txt");
+            string resultsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Results.txt");
+
+            try
+            {
+                using (StreamWriter equationsWriter = File.AppendText(equationsFilePath))
+                using (StreamWriter resultsWriter = File.AppendText(resultsFilePath))
+                {
+                    foreach (string computation in computationHistory)
+                    {
+                        string[] parts = computation.Split('=');
+                        equationsWriter.WriteLine(parts[0]);
+                        resultsWriter.WriteLine(parts[1]);
+                    }
+                }
+
+                MessageBox.Show($"История вычислений сохранена в файлы:\n{equationsFilePath}\n{resultsFilePath}", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении истории вычислений: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
+
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (computationHistory.Count != 0) e.CanExecute = true;
+        }
+
+
+        private void SaveHistory_Click(object sender, RoutedEventArgs e)
+        {
+            if (computationHistory.Count == 0)
+            {
+                MessageBox.Show("Нет истории вычислений для сохранения.", "Пусто", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            string filePath = "CalculationHistory.txt";
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    foreach (string computation in computationHistory)
+                    {
+                        writer.WriteLine(computation);
+                    }
+                }
+
+                MessageBox.Show($"История вычислений сохранена в файл: {filePath}", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении истории вычислений: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ShowHistory_Click(object sender, RoutedEventArgs e)
+        {
+            if (computationHistory.Count == 0)
+            {
+                MessageBox.Show("Нет истории вычислений для отображения.", "Пусто", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            HistoryWindow historyWindow = new HistoryWindow(computationHistory);
+            historyWindow.ShowDialog();
+        }
+
     }
 }

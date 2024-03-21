@@ -128,6 +128,10 @@
         <Menu DockPanel.Dock="Top" MinHeight="19" Background="#343434" BorderThickness="0">
             <MenuItem Header="History" Foreground="White">
                 <MenuItem Header="Save" Command = "Save" Margin="0" Foreground="Black" MaxHeight="19">
+                    
+                    <Button Grid.Row="6" Grid.Column="0" Margin="5" Content="Сохранить" Click="SaveHistory_Click"/>
+                    <Button Grid.Row="6" Grid.Column="1" Margin="5" Content="Показать историю" Click="ShowHistory_Click"/>
+
                     <MenuItem.CommandBindings>
                         <CommandBinding Command="Save" CanExecute="Save_CanExecute" Executed="Save_Executed"/>
                     </MenuItem.CommandBindings>
